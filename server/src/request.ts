@@ -1,0 +1,32 @@
+import { stringify as stringifyQueryString } from "node:querystring"
+import { Request as OtterRequest } from "@otterhttp/app"
+
+export class Request extends OtterRequest<never> {
+  private _queryString?: string
+
+  get origin() {
+    return `${this.protocol}://${this.host}`
+  }
+
+  get host() {
+    if (this.port) return `${this.hostname}:${this.port}`
+    return this.hostname
+  }
+
+  get href() {
+    return `${this.origin}${this.url}`
+  }
+
+  get queryString(): string {
+    if (this._queryString != null) return this._queryString
+    let queryString = stringifyQueryString(this.query)
+    if (queryString !== "") queryString = `?${queryString}`
+    this._queryString = queryString
+    return this._queryString
+  }
+
+  get pathnameWithoutTrailingSlash(): string {
+    if (!this.pathname.endsWith("/")) return this.pathname
+    return this.pathname.slice(0, -1)
+  }
+}
