@@ -1,0 +1,33 @@
+{
+  "name": "@bakeoff.pompy.uk/server",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "node dist/main.js",
+    "prebuild": "pnpm run generate && pnpm run type-check",
+    "build": "tsup",
+    "check": "biome check",
+    "check:fix": "biome check --write",
+    "dev": "tsx src/main.ts",
+    "dev:watch": "tsx watch src/main.ts",
+    "generate": "prisma generate",
+    "test": "vitest run --silent",
+    "type-check": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@bakeoff.pompy.uk/common": "workspace:*",
+    "@otterhttp/app": "^3.4.9",
+    "@prisma/client": "^7.10.0",
+    "openid-client": "^6.8.8",
+    "tsx": "^4.23.15",
+    "zod": "^4.6.7",
+    "zod-config": "^1.4.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "prisma": "8.0.0-rc.22",
+    "tsup": "^8.5.1",
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.4"
+  }
+}
