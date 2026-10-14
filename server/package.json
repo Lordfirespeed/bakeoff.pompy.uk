@@ -17,6 +17,7 @@
   "dependencies": {
     "@bakeoff.pompy.uk/common": "workspace:*",
     "@otterhttp/app": "^3.4.9",
+    "@otterhttp/errors": "^0.3.0",
     "@prisma/client": "^7.10.0",
     "openid-client": "^6.8.8",
     "tsx": "^4.23.15",

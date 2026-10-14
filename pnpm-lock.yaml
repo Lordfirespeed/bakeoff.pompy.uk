@@ -193,6 +193,9 @@ importers:
       '@otterhttp/app':
         specifier: ^3.4.9
         version: 3.4.9
+      '@otterhttp/errors':
+        specifier: ^0.3.0
+        version: 0.3.0
       '@prisma/client':
         specifier: ^7.10.0
         version: 7.10.0(prisma@8.0.0-rc.22(@types/node@26.6.5)(@vercel/nft@1.11.0(rollup@4.64.6))(magicast@0.5.5)(rollup@4.64.6)(typanion@3.14.0)(typescript@7.0.2)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1))(vitest@5.0.4(@types/node@26.6.5)(vite@8.3.4(@types/node@26.6.5)(esbuild@0.28.2)(jiti@2.7.0)(tsx@4.23.15)(yaml@2.9.1)))(ws@8.22.0))(typescript@7.0.2)
