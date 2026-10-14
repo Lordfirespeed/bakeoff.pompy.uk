@@ -2,6 +2,8 @@ import { stringify as stringifyQueryString } from "node:querystring"
 import { Request as OtterRequest } from "@otterhttp/app"
 
 export class Request extends OtterRequest<never> {
+  user?: { email: string }
+
   private _queryString?: string
 
   get origin() {
