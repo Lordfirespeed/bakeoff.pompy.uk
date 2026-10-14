@@ -4,6 +4,8 @@
   "name": "@bakeoff.pompy.uk/monorepo",
   "private": "true",
   "scripts": {
+    "check": "biome check",
+    "check:fix": "biome check --write",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "devDependencies": {
