@@ -196,9 +196,6 @@ importers:
       '@otterhttp/errors':
         specifier: ^0.3.0
         version: 0.3.0
-      dotenv:
-        specifier: ^18.0.7
-        version: 18.0.7
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.1)(zod@4.6.7)
@@ -2613,7 +2610,8 @@ snapshots:
 
   detect-libc@2.1.2: {}
 
-  dotenv@18.0.7: {}
+  dotenv@18.0.7:
+    optional: true
 
   drizzle-kit@1.0.0-rc.4:
     dependencies:
