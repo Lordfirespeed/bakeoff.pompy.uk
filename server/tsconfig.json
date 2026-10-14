@@ -47,5 +47,5 @@
     }
   },
   "exclude": ["dist", "node_modules"],
-  "include": ["src", "config"]
+  "include": ["src", "config", "*.config.ts"]
 }
