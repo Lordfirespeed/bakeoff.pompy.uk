@@ -61,6 +61,7 @@
 !src
 !config
 !public
+!drizzle
 
 # Explicit exceptions/ignores
 **/.DS_Store
