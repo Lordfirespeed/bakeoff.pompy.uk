@@ -4,15 +4,14 @@
   "compilerOptions": {
     // File Layout
     "rootDir": "./",
-    "baseUrl": "./",
 
     // Environment Settings
     // See also https://aka.ms/tsconfig/module
-    "module": "nodenext",
+    "module": "esnext",
     "target": "esnext",
-    "moduleResolution": "bundler",
     "lib": ["esnext"],
     "types": ["node"],
+    "esModuleInterop": true,
 
     // Other Outputs
     "sourceMap": true,
