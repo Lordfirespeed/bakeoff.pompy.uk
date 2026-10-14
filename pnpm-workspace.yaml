@@ -2,3 +2,9 @@ packages:
   - client
   - common
   - server
+allowBuilds:
+  esbuild: true
+  workerd: true
+permissions:
+  prisma:
+    skills: false
