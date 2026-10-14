@@ -7,5 +7,10 @@
   },
   "formatter": {
     "useEditorconfig": true
+  },
+  "json": {
+    "parser": {
+      "allowComments": true
+    }
   }
 }
