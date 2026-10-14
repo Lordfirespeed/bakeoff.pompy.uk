@@ -26,7 +26,7 @@ const config = await loadConfig({
 export const {
   listen: listenConfig,
   origin,
-  frontendOrigin,
+  db: dbConfig,
   session: sessionConfig,
   cookieSigning: cookieSigningConfig,
 } = config
