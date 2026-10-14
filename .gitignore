@@ -61,7 +61,6 @@
 !src
 !config
 !public
-!prisma
 
 # Explicit exceptions/ignores
 **/.DS_Store

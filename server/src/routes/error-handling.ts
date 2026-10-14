@@ -1,8 +1,6 @@
 import type { NextFunction } from "@otterhttp/app"
 import { ClientError, HttpError, HttpStatus, ServerError } from "@otterhttp/errors"
-import { isStructuredError } from "@prisma/orm-postgres/utils/structured-error"
 import { ZodError } from "zod/v4"
-
 
 import { sendHttpErrorResponse, sendZodErrorResponse } from "@/lib/error-responses"
 import type { Request, Response } from "@/types/middleware"
@@ -18,10 +16,6 @@ export function apiErrorHandler(error: Error, _request: Request, response: Respo
 
   if (error instanceof ZodError) {
     return sendZodErrorResponse(response, error)
-  }
-
-  if (isStructuredError(error)) {
-    // handle prisma errors here ...
   }
 
   if (Object.hasOwn(error, "sqlState")) {
