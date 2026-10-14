@@ -14,7 +14,7 @@ const app = new App<Request, Response>({
   },
 })
 
-app.use(routesApp)
+app.use("/api", routesApp)
 
 const server = createServer<typeof Request, typeof Response>({
   IncomingMessage: Request,
