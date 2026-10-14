@@ -22,11 +22,16 @@ export const sessionOptionsSchema = z.object({
   }),
 })
 
+export const dbOptionsSchema = z.object({
+  url: z.url(),
+})
+
 export const configSchema = z.object({
   listen: listenOptionsSchema,
   origin: z.url(),
   session: sessionOptionsSchema,
   cookieSigning: cookieSigningOptionsSchema,
+  db: dbOptionsSchema,
 })
 
 export type Config = z.infer<typeof configSchema>

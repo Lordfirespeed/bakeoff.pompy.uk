@@ -18,4 +18,7 @@ export default {
   cookieSigning: {
     secret: "cookie_signing_secret",
   },
+  db: {
+    url: "postgresql://bakeoff:bakeoff@localhost:5432/bakeoff?schema=public"
+  }
 } satisfies ConfigIn
