@@ -1,40 +1,42 @@
-import { Response as OtterResponse } from "@otterhttp/app"
-import { isValidStatusCode, statusMessages } from "@otterhttp/errors"
+import { Response as OtterResponse } from "@otterhttp/app";
+import { isValidStatusCode, statusMessages } from "@otterhttp/errors";
 
 import { isObject } from "@/lib/type-guards";
-import type { Request } from "@/request"
-import type { JSONLiteral } from "@/types/json-literal"
+import type { Request } from "@/request";
+import type { JSONLiteral } from "@/types/json-literal";
 
-export class Response<Req extends Request = Request> extends OtterResponse<Req> {
+export class Response<
+  Req extends Request = Request,
+> extends OtterResponse<Req> {
   override sendStatus(statusCode: number): this {
-    this.statusCode = statusCode
+    this.statusCode = statusCode;
 
     // Object.hasOwn(..., "data") -> true, but JSON.stringify() will omit properties with 'undefined' values
     this.json({
       data: undefined,
-    })
+    });
 
-    return this
+    return this;
   }
 
   override json(body?: JSONLiteral | undefined): this {
     if (isValidStatusCode(this.statusCode)) {
-      this.statusMessage ??= statusMessages[this.statusCode]
+      this.statusMessage ??= statusMessages[this.statusCode];
     }
 
     if (isObject(body) && Object.hasOwn(body, "data")) {
-      body.status ??= this.statusCode
-      body.message ??= this.statusMessage
+      body.status ??= this.statusCode;
+      body.message ??= this.statusMessage;
     }
 
     if (body === undefined) {
       body = {
         status: this.statusCode,
         message: this.statusMessage,
-      }
+      };
     }
 
-    super.json(body)
-    return this
+    super.json(body);
+    return this;
   }
 }

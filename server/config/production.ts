@@ -1,5 +1,5 @@
-import type { ConfigIn } from "@/config/schema"
-import type { DeepPartial } from "@/types/deep-partial"
+import type { ConfigIn } from "@/config/schema";
+import type { DeepPartial } from "@/types/deep-partial";
 
 export default {
   origin: "https://bakeoff.pompy.uk",
@@ -21,4 +21,4 @@ export default {
       domain: ".durhack.com",
     },
   },
-} satisfies DeepPartial<ConfigIn>
+} satisfies DeepPartial<ConfigIn>;

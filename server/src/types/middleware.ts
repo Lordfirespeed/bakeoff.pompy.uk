@@ -1,5 +1,9 @@
-import type { Request } from "@/request"
-import type { Response } from "@/response"
+import type { Request } from "@/request";
+import type { Response } from "@/response";
 
-export type { Request, Response }
-export type Middleware = (req: Request, res: Response, next: () => void) => Promise<void> | void
+export type { Request, Response };
+export type Middleware = (
+  req: Request,
+  res: Response,
+  next: () => void,
+) => Promise<void> | void;

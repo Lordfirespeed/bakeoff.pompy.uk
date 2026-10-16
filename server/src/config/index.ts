@@ -1,14 +1,14 @@
-import path from "node:path"
-import { loadConfig } from "zod-config"
-import { directoryAdapter } from "zod-config/directory-adapter"
+import path from "node:path";
+import { loadConfig } from "zod-config";
+import { directoryAdapter } from "zod-config/directory-adapter";
 
-import { dirname } from "@/dirname"
+import { dirname } from "@/dirname";
 
-import { configSchema } from "./schema"
+import { configSchema } from "./schema";
 
-export type * from "./schema"
+export type * from "./schema";
 
-import { typescriptAdapter } from "./typescript-adapter"
+import { typescriptAdapter } from "./typescript-adapter";
 
 const config = await loadConfig({
   schema: configSchema,
@@ -17,11 +17,12 @@ const config = await loadConfig({
     adapters: [
       {
         extensions: [".ts", ".js"],
-        adapterFactory: (filePath: string) => typescriptAdapter({ path: filePath }),
+        adapterFactory: (filePath: string) =>
+          typescriptAdapter({ path: filePath }),
       },
     ],
   }),
-})
+});
 
 export const {
   listen: listenConfig,
@@ -29,6 +30,6 @@ export const {
   db: dbConfig,
   session: sessionConfig,
   cookieSigning: cookieSigningConfig,
-} = config
+} = config;
 
-export { config }
+export { config };

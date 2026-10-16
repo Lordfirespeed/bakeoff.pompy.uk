@@ -1,12 +1,12 @@
-import { App } from "@otterhttp/app"
+import { App } from "@otterhttp/app";
 
-import { origin } from "@/config"
-import { methodNotAllowed } from "@/middleware/method-not-allowed"
-import { serveStaticJson } from "@/middleware/serve-static-json"
+import { origin } from "@/config";
+import { methodNotAllowed } from "@/middleware/method-not-allowed";
+import { serveStaticJson } from "@/middleware/serve-static-json";
 
-import type { Request, Response } from "@/types/middleware"
+import type { Request, Response } from "@/types/middleware";
 
-export const routesApp = new App<Request, Response>()
+export const routesApp = new App<Request, Response>();
 
 routesApp
   .route("/")
@@ -14,5 +14,5 @@ routesApp
   .get(
     serveStaticJson({
       you_url: new URL("/user", origin).href,
-    })
-  )
+    }),
+  );
