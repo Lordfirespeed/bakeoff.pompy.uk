@@ -28,6 +28,7 @@ export const {
   listen: listenConfig,
   origin,
   db: dbConfig,
+  oidc: oidcConfig,
   session: sessionConfig,
   cookieSigning: cookieSigningConfig,
 } = config;

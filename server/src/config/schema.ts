@@ -28,12 +28,20 @@ export const dbOptionsSchema = z.object({
   url: z.url(),
 });
 
+export const oidcOptionsSchema = z.object({
+  issuerSlug: z.string(),
+  issuerUrl: z.httpUrl(),
+  clientId: z.string(),
+  clientSecret: z.string(),
+})
+
 export const configSchema = z.object({
   listen: listenOptionsSchema,
   origin: z.url(),
   session: sessionOptionsSchema,
   cookieSigning: cookieSigningOptionsSchema,
   db: dbOptionsSchema,
+  oidc: oidcOptionsSchema,
 });
 
 export type Config = z.infer<typeof configSchema>;

@@ -21,4 +21,10 @@ export default {
   db: {
     url: "postgresql://bakeoff:bakeoff@localhost:5432/bakeoff?schema=public",
   },
+  oidc: {
+    issuerSlug: "twitch",
+    issuerUrl: "https://id.twitch.tv/oauth2",
+    clientId: "not-a-real-client-id",
+    clientSecret: "not-a-real-client-secret",
+  }
 } satisfies ConfigIn;
