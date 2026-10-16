@@ -1,3 +1,5 @@
+import { ClientError } from "@otterhttp/errors";
+
 import { origin } from "@/config";
 import { getSession } from "@/lib/session";
 import type { Middleware, Request, Response } from "@/types/middleware";
@@ -5,6 +7,22 @@ import type { Middleware, Request, Response } from "@/types/middleware";
 export class AuthHandlers {
   static loginPageUrl = new URL("/login", origin).href;
   static defaultPostLoginRedirect = new URL("/vote", origin).href;
+
+  validateIdentityProvider(): Middleware {
+    return async (request, _response, next) => {
+      const identityProvider = request.params.slug;
+      if (identityProvider === "twitch") return next();
+
+      throw new ClientError(
+        `Identity provider '${identityProvider}' not recognised`,
+        {
+          exposeMessage: true,
+          statusCode: 404,
+          code: "ERR_IDENTITY_PROVIDER_NOT_FOUND",
+        },
+      );
+    };
+  }
 
   loginSuccess(): Middleware {
     return async (request: Request, response: Response) => {

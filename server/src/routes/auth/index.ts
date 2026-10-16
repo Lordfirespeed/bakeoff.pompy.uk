@@ -22,6 +22,7 @@ authApp
 authApp
   .route("/:slug/")
   .all(methodNotAllowed(["GET"]))
+  .all(authHandlers.validateIdentityProvider())
   .get(async (request, response) => {
     console.log(request.params);
     response.sendStatus(200);
@@ -30,11 +31,13 @@ authApp
 authApp
   .route("/:slug/login")
   .all(methodNotAllowed(["GET"]))
+  .all(authHandlers.validateIdentityProvider())
   .get(authHandlers.beginOAuth2Flow());
 
 authApp
   .route("/:slug/callback")
   .all(methodNotAllowed(["GET"]))
+  .all(authHandlers.validateIdentityProvider())
   .get(authHandlers.oauth2FlowCallback())
   .get(authHandlers.loginSuccess());
 
