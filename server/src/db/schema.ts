@@ -15,6 +15,7 @@ export const users = pgTable("users", {
   username: string("username").notNull(),
   email: string("email").notNull().unique(),
 });
+export type User = typeof users.$inferSelect;
 
 export const tokenSets = pgTable(
   "token_sets",
@@ -36,6 +37,7 @@ export const tokenSets = pgTable(
     }),
   ],
 );
+export type TokenSet = typeof tokenSets.$inferSelect;
 
 export const sessionRecords = pgTable(
   "session_records",
@@ -58,6 +60,7 @@ export const sessionRecords = pgTable(
     }),
   ],
 );
+export type SessionRecord = typeof sessionRecords.$inferSelect;
 
 export const relations = defineRelations(
   {
