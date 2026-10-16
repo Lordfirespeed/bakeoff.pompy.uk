@@ -11,6 +11,11 @@
 /common/*
 /server/*
 
+## Nginx config files
+!/nginx
+/nginx/*
+!*.nginxconf
+
 ## Editorconfig
 !.editorconfig
 

@@ -1,0 +1,35 @@
+# see https://nginx.org/en/docs/http/ngx_http_upstream_module.html
+upstream bakeoff-frontend {
+    server 127.0.0.1:4001;
+}
+
+upstream bakeoff-backend {
+    server 127.0.0.1:4000;
+}
+
+server {
+    server_name bakeoff.pompy-dev.uk;
+    include "/etc/nginx/snippets/https-server-base.nginxconf";
+
+    ssl_certificate /etc/ssl/certs/bakeoff.pompy-dev.uk.cert.pem;
+    ssl_certificate_key /etc/ssl/private/bakeoff.pompy-dev.uk.key.pem;
+
+    location /api {
+        proxy_pass http://bakeoff-backend$request_uri;
+        include /etc/nginx/snippets/proxy-headers.nginxconf;
+    }
+
+    location / {
+        proxy_pass http://bakeoff-frontend$request_uri;
+        include /etc/nginx/snippets/proxy-headers.nginxconf;
+    }
+}
+
+server {
+    server_name bakeoff.pompy-dev.uk;
+
+    return 301 https://$host$request_uri;
+
+    listen 80;
+    listen [::]:80;
+}
