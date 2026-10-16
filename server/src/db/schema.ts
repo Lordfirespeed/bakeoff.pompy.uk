@@ -1,5 +1,6 @@
 import { defineRelations } from "drizzle-orm";
 import {
+  foreignKey,
   integer,
   json,
   pgTable,
@@ -15,28 +16,48 @@ export const users = pgTable("users", {
   email: string("email").notNull().unique(),
 });
 
-export const tokenSets = pgTable("token_sets", {
-  userId: integer("user_id").primaryKey(),
-  tokenType: string("token_type"),
-  accessToken: string("access_token"),
-  idToken: string("id_token"),
-  refreshToken: string("refresh_token"),
-  scope: string("scope"),
-  accessExpiry: timestamp("access_expires_at", { withTimezone: false }),
-  sessionState: string("session_state"),
-});
+export const tokenSets = pgTable(
+  "token_sets",
+  {
+    userId: integer("user_id").primaryKey(),
+    tokenType: string("token_type"),
+    accessToken: string("access_token"),
+    idToken: string("id_token"),
+    refreshToken: string("refresh_token"),
+    scope: string("scope"),
+    accessExpiry: timestamp("access_expires_at", { withTimezone: false }),
+    sessionState: string("session_state"),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [users.id],
+      name: "token_set_user_fk",
+    }),
+  ],
+);
 
-export const sessionRecords = pgTable("session_records", {
-  id: string("session_record_id").primaryKey(),
-  userId: integer("user_id"),
-  data: json("data").notNull(),
-  expiresAt: timestamp("expires_at"),
-  createdAt: timestamp("created_at").defaultNow().notNull(),
-  updatedAt: timestamp("updated_at")
-    .defaultNow()
-    .$onUpdate(() => new Date())
-    .notNull(),
-});
+export const sessionRecords = pgTable(
+  "session_records",
+  {
+    id: string("session_record_id").primaryKey(),
+    userId: integer("user_id"),
+    data: json("data").notNull(),
+    expiresAt: timestamp("expires_at"),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at")
+      .defaultNow()
+      .$onUpdate(() => new Date())
+      .notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [users.id],
+      name: "session_record_user_fk",
+    }),
+  ],
+);
 
 export const relations = defineRelations(
   {
