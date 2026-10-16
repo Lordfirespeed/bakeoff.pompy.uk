@@ -1,5 +1,11 @@
 import { defineRelations } from "drizzle-orm";
-import { integer, pgTable, timestamp, varchar, json } from "drizzle-orm/pg-core";
+import {
+  integer,
+  json,
+  pgTable,
+  timestamp,
+  varchar,
+} from "drizzle-orm/pg-core";
 
 const string = () => varchar({ length: 255 });
 
@@ -26,24 +32,30 @@ export const sessionRecords = pgTable("sessionRecords", {
   data: json().notNull(),
   expiresAt: timestamp(),
   createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp().defaultNow().$onUpdate(() => new Date()).notNull()
-})
+  updatedAt: timestamp()
+    .defaultNow()
+    .$onUpdate(() => new Date())
+    .notNull(),
+});
 
-export const relations = defineRelations({
-  users,
-  tokenSets,
-  sessionRecords,
-}, (r) => ({
-  tokenSets: {
-    user: r.one.users({
-      from: r.tokenSets.userId,
-      to: r.users.id,
-    }),
+export const relations = defineRelations(
+  {
+    users,
+    tokenSets,
+    sessionRecords,
   },
-  sessionRecords: {
-    user: r.one.users({
-      from: r.sessionRecords.userId,
-      to: r.users.id,
-    })
-  }
-}));
+  (r) => ({
+    tokenSets: {
+      user: r.one.users({
+        from: r.tokenSets.userId,
+        to: r.users.id,
+      }),
+    },
+    sessionRecords: {
+      user: r.one.users({
+        from: r.sessionRecords.userId,
+        to: r.users.id,
+      }),
+    },
+  }),
+);
