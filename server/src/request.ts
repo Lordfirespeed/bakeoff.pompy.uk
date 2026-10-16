@@ -1,8 +1,13 @@
 import { stringify as stringifyQueryString } from "node:querystring";
 import { Request as OtterRequest } from "@otterhttp/app";
+import type { UserInfoResponse } from "openid-client";
+
+import type { TokenSet } from "@/db/schema";
 
 export class Request extends OtterRequest<never> {
   user?: { email: string };
+  userTokenSet?: Omit<TokenSet, "userId">;
+  userProfile?: UserInfoResponse;
 
   private _queryString?: string;
 
