@@ -2,9 +2,7 @@
   "version": "8",
   "dialect": "postgres",
   "id": "4dfed0a2-e731-4d8f-99f4-1c234c8795a5",
-  "prevIds": [
-    "00000000-0000-0000-0000-000000000000"
-  ],
+  "prevIds": ["00000000-0000-0000-0000-000000000000"],
   "ddl": [
     {
       "isRlsEnabled": false,
@@ -256,14 +254,10 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "user_id"
-      ],
+      "columnsTo": ["user_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "session_record_user_fk",
@@ -273,14 +267,10 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "user_id"
-      ],
+      "columnsTo": ["user_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "token_set_user_fk",
@@ -289,9 +279,7 @@
       "table": "token_sets"
     },
     {
-      "columns": [
-        "session_record_id"
-      ],
+      "columns": ["session_record_id"],
       "nameExplicit": false,
       "name": "session_records_pkey",
       "schema": "public",
@@ -299,9 +287,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "nameExplicit": false,
       "name": "token_sets_pkey",
       "schema": "public",
@@ -309,9 +295,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
@@ -320,9 +304,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "users_email_key",
       "schema": "public",

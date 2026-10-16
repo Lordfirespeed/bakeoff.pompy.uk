@@ -9,7 +9,7 @@ export default {
       secure: true,
       /**
        * We have to use 'lax' because OAuth2 flow doesn't work with 'strict', it relies on
-       * session cookies being sent when redirected back to the app from the authentication provider.
+       * session cookies.ts being sent when redirected back to the app from the authentication provider.
        *
        * We could try to do something clever:
        *  1. set sameSite "lax" on OAuth2 flow init
