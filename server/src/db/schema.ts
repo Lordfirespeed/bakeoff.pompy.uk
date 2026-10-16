@@ -4,6 +4,7 @@ import {
   integer,
   json,
   pgTable,
+  primaryKey,
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -20,16 +21,17 @@ export type User = typeof users.$inferSelect;
 export const tokenSets = pgTable(
   "token_sets",
   {
-    userId: integer("user_id").primaryKey(),
+    userId: integer("user_id"),
+    identityProvider: string("identity_provider"),
     tokenType: string("token_type"),
     accessToken: string("access_token"),
     idToken: string("id_token"),
     refreshToken: string("refresh_token"),
     scope: string("scope"),
     accessExpiry: timestamp("access_expires_at", { withTimezone: false }),
-    sessionState: string("session_state"),
   },
   (table) => [
+    primaryKey({ columns: [table.userId, table.identityProvider] }),
     foreignKey({
       columns: [table.userId],
       foreignColumns: [users.id],
