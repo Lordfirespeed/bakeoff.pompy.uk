@@ -3,4 +3,4 @@ import { dbConfig } from "@/config";
 
 import { relations } from "./schema";
 
-export const drizzle = drizzleFactory(dbConfig.url, { relations });
+export const drizzle = drizzleFactory(dbConfig.url.href, { relations });
