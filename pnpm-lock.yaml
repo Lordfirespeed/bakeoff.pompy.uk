@@ -193,9 +193,15 @@ importers:
       '@otterhttp/app':
         specifier: ^3.4.9
         version: 3.4.9
+      '@otterhttp/cookie-signature':
+        specifier: ^3.0.0
+        version: 3.0.0
       '@otterhttp/errors':
         specifier: ^0.3.0
         version: 0.3.0
+      '@otterhttp/session':
+        specifier: ^0.3.2
+        version: 0.3.2
       drizzle-orm:
         specifier: 1.0.0-rc.4
         version: 1.0.0-rc.4(@types/pg@8.23.1)(pg@8.23.1)(zod@4.6.7)
@@ -804,6 +810,10 @@ packages:
     resolution: {integrity: sha512-2qFRWOwTQ2ylO0LURyqvOKua0DDxZBl1hD5pZl/GLnoPfUlbX9edUcgbNrWyqTiQ44i63Wi8UhqiXMoJqbBuGA==}
     engines: {node: '>=20.16.0'}
 
+  '@otterhttp/cookie-signature@3.0.0':
+    resolution: {integrity: sha512-AcWQokILP5/oz4Nw5cj5d4UYCrhTaMupQ30eVcDJrNt06+MCJQ+NGgob3xsJJMXUxuUkOVu8eVgchatOqKvGQw==}
+    engines: {node: '>=20.16.0'}
+
   '@otterhttp/cookie@3.0.2':
     resolution: {integrity: sha512-KUHZmH+cstno15NbpS2G88fYKqcUyM4iClXq+ogmmLbD0ICvnBC+mjH5tkC439D5Fl/1fJnpv+Fui0ve4PyyIQ==}
     engines: {node: '>=20.16.0'}
@@ -847,6 +857,10 @@ packages:
   '@otterhttp/send@3.0.3':
     resolution: {integrity: sha512-ugQVtm05l23m1ZCDYMCaGflGstCaqO5FBhxgCZXVGhCZ+tM/KbXYDpr25dMLJBZmD+4Tw4GkAtB3UF9PrxoMzg==}
     engines: {node: '>=20.16.0'}
+
+  '@otterhttp/session@0.3.2':
+    resolution: {integrity: sha512-ISk8s40pCfjxxoqbzQPG/gdSuWijvP/VGiwjSHcZeHVMsMD9Z+8z6/7Bp0ir6Z9fzjIspW+On0c/QhzP95bkiQ==}
+    engines: {node: '>=20'}
 
   '@otterhttp/type-is@4.0.1':
     resolution: {integrity: sha512-ir2n0Xu9Nixi02YPJZd9BbdQIxLSRrFaIN2pGMsiqhvVF7AjaQBFcKnSx3dQ+b6RLuej8GYHk2wz+PPdO0rGiA==}
@@ -2303,6 +2317,8 @@ snapshots:
     dependencies:
       '@otterhttp/parameters': 0.1.0
 
+  '@otterhttp/cookie-signature@3.0.0': {}
+
   '@otterhttp/cookie@3.0.2': {}
 
   '@otterhttp/encode-url@3.0.0': {}
@@ -2355,6 +2371,10 @@ snapshots:
       '@otterhttp/errors': 0.3.0
       '@otterhttp/etag': 3.0.0
       mime: 4.1.1
+
+  '@otterhttp/session@0.3.2':
+    dependencies:
+      nanoid: 3.3.20
 
   '@otterhttp/type-is@4.0.1':
     dependencies:
