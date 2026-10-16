@@ -71,6 +71,10 @@ export const relations = defineRelations(
     sessionRecords,
   },
   (r) => ({
+    users: {
+      tokenSets: r.many.tokenSets(),
+      sessions: r.many.sessionRecords(),
+    },
     tokenSets: {
       user: r.one.users({
         from: r.tokenSets.userId,
