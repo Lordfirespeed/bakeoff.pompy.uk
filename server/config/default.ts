@@ -5,7 +5,7 @@ export default {
     host: "127.0.0.1",
     port: 4000,
   },
-  origin: "http://bakeoff.pompy-dev.uk",
+  origin: "https://bakeoff.pompy-dev.uk",
   session: {
     cookie: {
       name: "bakeoff-session",
@@ -23,7 +23,7 @@ export default {
   },
   oidc: {
     issuerSlug: "twitch",
-    issuerUrl: "https://id.twitch.tv/oauth2",
+    issuerUrl: new URL("https://id.twitch.tv/oauth2"),
     clientId: "not-a-real-client-id",
     clientSecret: "not-a-real-client-secret",
   }
