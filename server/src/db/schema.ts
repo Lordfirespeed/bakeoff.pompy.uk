@@ -21,8 +21,8 @@ export type User = typeof users.$inferSelect;
 export const tokenSets = pgTable(
   "token_sets",
   {
-    userId: integer("user_id"),
-    identityProvider: string("identity_provider"),
+    userId: integer("user_id").notNull(),
+    identityProvider: string("identity_provider").notNull(),
     tokenType: string("token_type"),
     accessToken: string("access_token"),
     idToken: string("id_token"),
