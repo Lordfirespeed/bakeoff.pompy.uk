@@ -25,19 +25,19 @@ export const sessionOptionsSchema = z.object({
 });
 
 export const dbOptionsSchema = z.object({
-  url: z.url(),
+  url: z.url().transform(value => new URL(value)),
 });
 
 export const oidcOptionsSchema = z.object({
   issuerSlug: z.string(),
-  issuerUrl: z.httpUrl(),
+  issuerUrl: z.url().transform((value) => new URL(value)),
   clientId: z.string(),
   clientSecret: z.string(),
 })
 
 export const configSchema = z.object({
   listen: listenOptionsSchema,
-  origin: z.url(),
+  origin: z.url().transform((value) => new URL(value)),
   session: sessionOptionsSchema,
   cookieSigning: cookieSigningOptionsSchema,
   db: dbOptionsSchema,
