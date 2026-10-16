@@ -7,32 +7,32 @@ import {
   varchar,
 } from "drizzle-orm/pg-core";
 
-const string = () => varchar({ length: 255 });
+const string = (name: string) => varchar(name, { length: 255 });
 
 export const users = pgTable("users", {
-  id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  preferred_username: string().notNull(),
-  email: string().notNull().unique(),
+  id: integer("user_id").primaryKey().generatedAlwaysAsIdentity(),
+  username: string("username").notNull(),
+  email: string("email").notNull().unique(),
 });
 
-export const tokenSets = pgTable("tokenSets", {
-  userId: integer().primaryKey(),
-  tokenType: string(),
-  accessToken: string(),
-  idToken: string(),
-  refreshToken: string(),
-  scope: string(),
-  accessExpiry: timestamp({ withTimezone: false }),
-  sessionState: string(),
+export const tokenSets = pgTable("token_sets", {
+  userId: integer("user_id").primaryKey(),
+  tokenType: string("token_type"),
+  accessToken: string("access_token"),
+  idToken: string("id_token"),
+  refreshToken: string("refresh_token"),
+  scope: string("scope"),
+  accessExpiry: timestamp("access_expires_at", { withTimezone: false }),
+  sessionState: string("session_state"),
 });
 
-export const sessionRecords = pgTable("sessionRecords", {
-  id: string(),
-  userId: integer(),
-  data: json().notNull(),
-  expiresAt: timestamp(),
-  createdAt: timestamp().defaultNow().notNull(),
-  updatedAt: timestamp()
+export const sessionRecords = pgTable("session_records", {
+  id: string("session_record_id").primaryKey(),
+  userId: integer("user_id"),
+  data: json("data").notNull(),
+  expiresAt: timestamp("expires_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at")
     .defaultNow()
     .$onUpdate(() => new Date())
     .notNull(),
