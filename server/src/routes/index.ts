@@ -6,6 +6,8 @@ import { serveStaticJson } from "@/middleware/serve-static-json";
 
 import type { Request, Response } from "@/types/middleware";
 
+import { authApp } from "./auth";
+
 export const routesApp = new App<Request, Response>();
 
 routesApp
@@ -16,3 +18,5 @@ routesApp
       you_url: new URL("/user", origin).href,
     }),
   );
+
+routesApp.use("/auth", authApp);
