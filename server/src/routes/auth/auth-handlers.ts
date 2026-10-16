@@ -1,8 +1,11 @@
+import assert from "node:assert/strict";
 import { ClientError } from "@otterhttp/errors";
+import * as client from "openid-client";
 
 import { origin } from "@/config";
 import { getSession } from "@/lib/session";
 import type { Middleware, Request, Response } from "@/types/middleware";
+import {issuerConfig} from "@/lib/identity-provider-client";
 
 export class AuthHandlers {
   static loginPageUrl = new URL("/login", origin).href;
@@ -46,7 +49,30 @@ export class AuthHandlers {
   }
 
   logout(): Middleware {
-    return async (request, response) => {};
+    return async (request, response) => {
+      if (request.user == null) {
+        await response.redirect(origin.href)
+        return
+      }
+
+      const session = await getSession(request, response)
+      session.userId = undefined
+      session.identityProvider = undefined
+      await session.commit()
+
+      if (request.userTokenSet?.idToken == null) {
+        await response.redirect(origin.href)
+        return
+      }
+
+      // the identity provider is known based off the tokenSet
+      const endSessionUrl = client.buildEndSessionUrl(issuerConfig, {
+        id_token_hint: request.userTokenSet?.idToken,
+        post_logout_redirect_uri: origin.href,
+      })
+      await response.redirect(endSessionUrl.href)
+      return
+    };
   }
 
   beginOAuth2Flow(): Middleware {
