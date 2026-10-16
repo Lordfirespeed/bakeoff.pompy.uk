@@ -1,4 +1,6 @@
-import { dbConfig } from "@/config"
-import { drizzle } from "drizzle-orm/node-postgres"
+import { drizzle } from "drizzle-orm/node-postgres";
+import { dbConfig } from "@/config";
 
-export const db = drizzle(dbConfig.url)
+import { relations } from "./schema";
+
+export const db = drizzle(dbConfig.url, { relations });

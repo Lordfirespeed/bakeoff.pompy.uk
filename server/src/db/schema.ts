@@ -1,7 +1,30 @@
-import { integer, pgTable, varchar } from "drizzle-orm/pg-core";
+import { defineRelations } from "drizzle-orm";
+import { integer, pgTable, timestamp, varchar } from "drizzle-orm/pg-core";
 
-export const usersTable = pgTable("users", {
+const string = () => varchar({ length: 255 });
+
+export const users = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
-  preferred_username: varchar({ length: 255 }).notNull(),
-  email: varchar({ length: 255 }).notNull().unique(),
+  preferred_username: string().notNull(),
+  email: string().notNull().unique(),
 });
+
+export const tokenSets = pgTable("tokenSets", {
+  userId: integer().primaryKey(),
+  tokenType: string(),
+  accessToken: string(),
+  idToken: string(),
+  refreshToken: string(),
+  scope: string(),
+  accessExpiry: timestamp({ withTimezone: false }),
+  sessionState: string(),
+});
+
+export const relations = defineRelations({ users, tokenSets }, (r) => ({
+  tokenSets: {
+    user: r.one.users({
+      from: r.tokenSets.userId,
+      to: r.users.id,
+    }),
+  },
+}));
