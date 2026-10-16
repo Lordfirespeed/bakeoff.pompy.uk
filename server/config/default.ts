@@ -23,7 +23,7 @@ export default {
   },
   oidc: {
     issuerSlug: "twitch",
-    issuerUrl: new URL("https://id.twitch.tv/oauth2"),
+    issuerUrl: "https://id.twitch.tv/oauth2",
     clientId: "not-a-real-client-id",
     clientSecret: "not-a-real-client-secret",
   }
