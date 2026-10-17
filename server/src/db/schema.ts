@@ -120,7 +120,7 @@ export const relations = defineRelations(
     users: {
       tokenSets: r.many.tokenSets(),
       sessions: r.many.sessionRecords(),
-      bakerProfile: r.one.bakes(),
+      bakerProfile: r.one.bakers(),
       vote: r.one.votes(),
     },
     tokenSets: {
