@@ -3,11 +3,13 @@ import { Request as OtterRequest } from "@otterhttp/app";
 import type { UserInfoResponse } from "openid-client";
 
 import type { TokenSet } from "@/db/schema";
+import type { Role } from "@/lib/roles";
 
 export class Request extends OtterRequest<never> {
   user?: { id: number; email: string };
   userTokenSet?: Omit<TokenSet, "userId">;
   userProfile?: UserInfoResponse;
+  roles?: Role[]
 
   private _queryString?: string;
 
