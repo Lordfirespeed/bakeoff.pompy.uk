@@ -2,12 +2,22 @@ import { type Configuration, discovery } from "openid-client";
 
 import { oidcConfig } from "@/config";
 
-export const issuerConfigs: Map<string, Configuration> = new Map();
+type Issuer = {
+  slug: string;
+  scopes: string[];
+  clientConfig: Configuration;
+}
+
+export const issuerConfigs: Map<string, Issuer> = new Map();
 issuerConfigs.set(
   oidcConfig.issuerSlug,
-  await discovery(
-    oidcConfig.issuerUrl,
-    oidcConfig.clientId,
-    oidcConfig.clientSecret,
-  ),
+  {
+    slug: oidcConfig.issuerSlug,
+    scopes: oidcConfig.scopes,
+    clientConfig: await discovery(
+      oidcConfig.issuerUrl,
+      oidcConfig.clientId,
+      oidcConfig.clientSecret,
+    ),
+  }
 );
