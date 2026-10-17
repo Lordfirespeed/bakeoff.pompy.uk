@@ -175,6 +175,11 @@ export class AuthHandlers {
       // the identity provider is known based off the tokenSet
       const issuer = issuers.get(request.userTokenSet.identityProvider);
       assert(issuer != null);
+      if (issuer.clientConfig.serverMetadata().end_session_endpoint == null) {
+        await response.redirect(origin.href);
+        return;
+      }
+
       const endSessionUrl = client.buildEndSessionUrl(issuer.clientConfig, {
         id_token_hint: request.userTokenSet?.idToken,
         post_logout_redirect_uri: origin.href,
