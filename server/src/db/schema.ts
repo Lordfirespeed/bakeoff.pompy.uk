@@ -64,6 +64,39 @@ export const sessionRecords = pgTable(
 );
 export type SessionRecord = typeof sessionRecords.$inferSelect;
 
+export const bakers = pgTable("bakers", {
+  id: integer("baker_id").primaryKey().generatedAlwaysAsIdentity(),
+  bakerName: string("baker_name").notNull().unique(),
+  bakerUrl: string("baker_url").notNull(),
+  bakerImageUrl: string("baker_image_url").notNull(),
+  bakerDescription: varchar("baker_description", { length: 2048 }).notNull(),
+});
+export type Baker = typeof bakers.$inferSelect;
+
+export const bakes = pgTable(
+  "bakes",
+  {
+    id: integer("bake_id").primaryKey().generatedAlwaysAsIdentity(),
+    bakeTitle: string("bake_title").notNull(),
+    bakerId: integer("baker_id").notNull(),
+    bakeImageUrl: string("bake_image_url").notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.bakerId],
+      foreignColumns: [bakers.id],
+      name: "bake_baker_fk",
+    }),
+  ],
+);
+export type Bake = typeof bakes.$inferSelect;
+
+export const votes = pgTable("votes", {
+  userId: integer("user_id").primaryKey(),
+  bakeRanking: integer("bake_ranking").array().notNull(),
+});
+export type Vote = typeof votes.$inferSelect;
+
 export const relations = defineRelations(
   {
     users,
