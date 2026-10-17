@@ -16,7 +16,7 @@ routesApp
   .get(
     serveStaticJson({
       auth_url: new URL("/api/auth", origin).href,
-      you_url: new URL("/api/user", origin).href,
+      you_url: new URL("/api/me", origin).href,
     }),
   );
 
