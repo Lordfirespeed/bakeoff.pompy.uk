@@ -64,13 +64,23 @@ export const sessionRecords = pgTable(
 );
 export type SessionRecord = typeof sessionRecords.$inferSelect;
 
-export const bakers = pgTable("bakers", {
-  id: integer("baker_id").primaryKey().generatedAlwaysAsIdentity(),
-  bakerName: string("baker_name").notNull().unique(),
-  bakerUrl: string("baker_url").notNull(),
-  bakerImageUrl: string("baker_image_url").notNull(),
-  bakerDescription: varchar("baker_description", { length: 2048 }).notNull(),
-});
+export const bakers = pgTable(
+  "bakers",
+  {
+    userId: integer("user_id").primaryKey(),
+    bakerName: string("baker_name").notNull().unique(),
+    bakerUrl: string("baker_url").notNull(),
+    bakerImageUrl: string("baker_image_url").notNull(),
+    bakerDescription: varchar("baker_description", { length: 2048 }).notNull(),
+  },
+  (table) => [
+    foreignKey({
+      columns: [table.userId],
+      foreignColumns: [users.id],
+      name: "baker_user_fk",
+    }),
+  ],
+);
 export type Baker = typeof bakers.$inferSelect;
 
 export const bakes = pgTable(
@@ -84,7 +94,7 @@ export const bakes = pgTable(
   (table) => [
     foreignKey({
       columns: [table.bakerId],
-      foreignColumns: [bakers.id],
+      foreignColumns: [bakers.userId],
       name: "bake_baker_fk",
     }),
   ],
@@ -102,11 +112,16 @@ export const relations = defineRelations(
     users,
     tokenSets,
     sessionRecords,
+    bakers,
+    bakes,
+    votes,
   },
   (r) => ({
     users: {
       tokenSets: r.many.tokenSets(),
       sessions: r.many.sessionRecords(),
+      bakerProfile: r.one.bakes(),
+      vote: r.one.votes(),
     },
     tokenSets: {
       user: r.one.users({
@@ -117,6 +132,25 @@ export const relations = defineRelations(
     sessionRecords: {
       user: r.one.users({
         from: r.sessionRecords.userId,
+        to: r.users.id,
+      }),
+    },
+    bakers: {
+      user: r.one.users({
+        from: r.bakers.userId,
+        to: r.users.id,
+      }),
+      bakes: r.many.bakes(),
+    },
+    bakes: {
+      baker: r.one.bakers({
+        from: r.bakes.bakerId,
+        to: r.bakers.userId,
+      }),
+    },
+    votes: {
+      voter: r.one.users({
+        from: r.votes.userId,
         to: r.users.id,
       }),
     },
