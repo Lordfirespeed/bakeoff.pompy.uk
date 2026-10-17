@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { ServerError } from "@otterhttp/errors";
 import { and, eq } from "drizzle-orm";
 import * as client from "openid-client";
+import { validateJwtIdToken } from "oauth4webapi";
 
 import { drizzle, tokenSets } from "@/db";
 import type { TokenSet as DbTokenSet } from "@/db/schema";
@@ -93,13 +94,16 @@ export function authenticate(): Middleware {
       return next();
     }
 
+    assert(tokenSet.idToken != null)
+    const claims = await validateJwtIdToken(issuerConfig.serverMetadata(), issuerConfig.clientMetadata(), tokenSet.idToken, {});
+
     // use the token set to get the user profile
     let profile: client.UserInfoResponse | undefined;
     try {
       profile = await client.fetchUserInfo(
         issuerConfig,
         tokenSet.accessToken,
-        client.skipSubjectCheck,
+        claims.sub,
       );
     } catch (error) {
       if (isNetworkError(error)) {
