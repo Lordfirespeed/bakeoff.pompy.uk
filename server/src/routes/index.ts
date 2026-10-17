@@ -7,6 +7,7 @@ import { serveStaticJson } from "@/middleware/serve-static-json";
 import type { Request, Response } from "@/types/middleware";
 
 import { authApp } from "./auth";
+import { meApp } from "./me";
 
 export const routesApp = new App<Request, Response>();
 
@@ -21,3 +22,4 @@ routesApp
   );
 
 routesApp.use("/auth", authApp);
+routesApp.use("/me", meApp);
