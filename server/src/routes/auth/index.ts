@@ -21,6 +21,13 @@ authApp
   );
 
 authApp
+  .route("/logout")
+  .all(methodNotAllowed(["GET"]))
+  .all(authenticate)
+  .get(authHandlers.logout());
+
+
+authApp
   .route("/:slug/")
   .all(methodNotAllowed(["GET"]))
   .all(authHandlers.validateIdentityProvider())
@@ -43,11 +50,5 @@ authApp
   .all(authHandlers.validateIdentityProvider())
   .get(authHandlers.oauth2FlowCallback())
   .get(authHandlers.loginSuccess());
-
-authApp
-  .route("/logout")
-  .all(methodNotAllowed(["GET"]))
-  .all(authenticate)
-  .get(authHandlers.logout());
 
 export { authApp };
