@@ -6,8 +6,12 @@ import z from "zod/v4";
 import { origin } from "@/config";
 import { issuers } from "@/lib/identity-provider-client";
 import { type BakeoffSession, getSession } from "@/lib/session";
-import { isString } from "@/lib/type-guards";
+import {isBoolean, isString} from "@/lib/type-guards";
 import type { Middleware, Request, Response } from "@/types/middleware";
+import {adaptTokenResponseToDatabase} from "@/lib/adapt-token-response";
+import {drizzle, sessionRecords, tokenSets, users} from "@/db";
+import { QueryBuilder } from "drizzle-orm/pg-core";
+import {eq} from "drizzle-orm";
 
 export class AuthHandlers {
   static loginPageUrl = new URL("/login", origin).href;
@@ -54,9 +58,14 @@ export class AuthHandlers {
     };
   }
 
-  getIdentityProvider(request: Request, _response: Response) {
+  getIdentityProviderSlug(request: Request, _response: Response) {
     const identityProviderSlug = request.params.slug;
     assert(identityProviderSlug != null);
+    return identityProviderSlug;
+  }
+
+  getIdentityProvider(request: Request, response: Response) {
+    const identityProviderSlug = this.getIdentityProviderSlug(request, response)
     const identityProvider = issuers.get(identityProviderSlug);
     assert(identityProvider != null);
     return identityProvider;
@@ -184,16 +193,14 @@ export class AuthHandlers {
       this.rememberDestination(request, response, session);
       this.lazyLogout(response, session);
       const codeVerifier = this.getOrGenerateCodeVerifier(response, session);
-      if (!clientConfig.serverMetadata().supportsPKCE()) {
-        parameters.state = this.generateState(response, session);
-      }
+      parameters.state = this.generateState(response, session);
       if (response.sessionDirty) await session.commit();
 
       parameters.redirect_uri = new URL(
         `/auth/${request.params.slug}/callback`,
         origin,
       ).href;
-      parameters.scope = "openid user:read:email";
+      parameters.scope = this.getIdentityProviderScope(request, response);
       parameters.code_challenge =
         await client.calculatePKCECodeChallenge(codeVerifier);
       parameters.code_challenge_method = "S256";
@@ -204,7 +211,85 @@ export class AuthHandlers {
   }
 
   oauth2FlowCallback(): Middleware {
-    return async (request, response) => {};
+    return async (request, response) => {
+      const session = await getSession(request, response);
+      let codeVerifier: unknown
+      let state: unknown
+      try {
+        codeVerifier = session.keycloakOAuth2FlowCodeVerifier
+        state = session.providerOAuth2FlowState
+        if (!isString(codeVerifier))
+          throw new ClientError("OAuth2 code verifier not initialized", {
+            statusCode: 400,
+            exposeMessage: false,
+          })
+        if (!isString(state))
+          throw new ClientError("OAuth2 'state' not initialized", {
+            statusCode: 400,
+            exposeMessage: false,
+          })
+      } finally {
+        session.providerOAuth2FlowCodeVerifier = undefined
+        session.providerOAuth2FlowState = undefined
+        await session.commit()
+      }
+
+      const clientConfig = this.getIdentityProviderConfig(request, response);
+      const tokens = await client.authorizationCodeGrant(
+        clientConfig,
+        new URL(request.href),
+        {
+          pkceCodeVerifier: codeVerifier,
+          expectedState: state,
+        },
+        {
+          claims: JSON.stringify({
+            id_token: { email: null, email_verified: null, preferred_username: null },
+            userinfo: { email: null, email_verified: null, preferred_username: null },
+          })
+        },
+      )
+
+      const claims = tokens.claims();
+      assert(claims != null)
+      assert(isString(claims.preferred_username))
+      assert(isString(claims.email))
+      assert(isBoolean(claims.email_verified))
+      if (claims.email_verified === false) {
+        throw new ClientError("Account email address not verified", { statusCode: 400, code: "ERR_EMAIL_ADDRESS_NOT_VERIFIED", exposeMessage: true })
+      }
+      const identityProviderSlug = this.getIdentityProviderSlug(request, response)
+      const serializedTokens = adaptTokenResponseToDatabase(identityProviderSlug, tokens)
+
+      const [inserted, existing] = await Promise.all([
+        drizzle
+          .insert(users)
+          .values({
+            username: claims.preferred_username as string,
+            email: claims.email as string,
+          })
+          .onConflictDoNothing()
+          .returning({ id: users.id }),
+        drizzle.query.users.findFirst({
+          columns: { id: true },
+          where: { email: claims.email as string },
+        })
+      ])
+      const userId = (inserted[0] ?? existing)?.id;
+      assert(userId != null)
+
+      await drizzle.insert(tokenSets)
+        .values({ userId, ...serializedTokens })
+        .onConflictDoUpdate({
+          target: [tokenSets.userId, tokenSets.identityProvider],
+          set: {...serializedTokens},
+        })
+
+      session.userId = userId;
+      session.identityProvider = identityProviderSlug
+      await session.commit()
+      request.user = { userId, email: claims.email as string, }
+    };
   }
 }
 
