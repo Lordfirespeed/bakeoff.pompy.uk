@@ -11,6 +11,11 @@ import {
 
 const string = (name: string) => varchar(name, { length: 255 });
 
+export const state = pgTable("bakeoff_state", {
+  key: string("key").primaryKey(),
+  value: json("value").notNull(),
+});
+
 export const users = pgTable("users", {
   id: integer("user_id").primaryKey().generatedAlwaysAsIdentity(),
   username: string("username").notNull(),
@@ -109,6 +114,7 @@ export type Vote = typeof votes.$inferSelect;
 
 export const relations = defineRelations(
   {
+    state,
     users,
     tokenSets,
     sessionRecords,
