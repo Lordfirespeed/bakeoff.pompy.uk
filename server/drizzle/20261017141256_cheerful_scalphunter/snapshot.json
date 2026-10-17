@@ -2,9 +2,7 @@
   "version": "8",
   "dialect": "postgres",
   "id": "2d20cff9-2de4-40b1-b48c-cc86e146c319",
-  "prevIds": [
-    "744fa256-4a94-455a-9607-d4fdbbb16fa0"
-  ],
+  "prevIds": ["744fa256-4a94-455a-9607-d4fdbbb16fa0"],
   "ddl": [
     {
       "isRlsEnabled": false,
@@ -435,14 +433,10 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "baker_id"
-      ],
+      "columns": ["baker_id"],
       "schemaTo": "public",
       "tableTo": "bakers",
-      "columnsTo": [
-        "baker_id"
-      ],
+      "columnsTo": ["baker_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "bake_baker_fk",
@@ -452,14 +446,10 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "user_id"
-      ],
+      "columnsTo": ["user_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "session_record_user_fk",
@@ -469,14 +459,10 @@
     },
     {
       "nameExplicit": true,
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "schemaTo": "public",
       "tableTo": "users",
-      "columnsTo": [
-        "user_id"
-      ],
+      "columnsTo": ["user_id"],
       "onUpdate": "NO ACTION",
       "onDelete": "NO ACTION",
       "name": "token_set_user_fk",
@@ -485,10 +471,7 @@
       "table": "token_sets"
     },
     {
-      "columns": [
-        "user_id",
-        "identity_provider"
-      ],
+      "columns": ["user_id", "identity_provider"],
       "nameExplicit": false,
       "name": "token_sets_pkey",
       "entityType": "pks",
@@ -496,9 +479,7 @@
       "table": "token_sets"
     },
     {
-      "columns": [
-        "baker_id"
-      ],
+      "columns": ["baker_id"],
       "nameExplicit": false,
       "name": "bakers_pkey",
       "schema": "public",
@@ -506,9 +487,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "bake_id"
-      ],
+      "columns": ["bake_id"],
       "nameExplicit": false,
       "name": "bakes_pkey",
       "schema": "public",
@@ -516,9 +495,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "session_record_id"
-      ],
+      "columns": ["session_record_id"],
       "nameExplicit": false,
       "name": "session_records_pkey",
       "schema": "public",
@@ -526,9 +503,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "nameExplicit": false,
       "name": "users_pkey",
       "schema": "public",
@@ -536,9 +511,7 @@
       "entityType": "pks"
     },
     {
-      "columns": [
-        "user_id"
-      ],
+      "columns": ["user_id"],
       "nameExplicit": false,
       "name": "votes_pkey",
       "schema": "public",
@@ -547,9 +520,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "baker_name"
-      ],
+      "columns": ["baker_name"],
       "nullsNotDistinct": false,
       "name": "bakers_baker_name_key",
       "schema": "public",
@@ -558,9 +529,7 @@
     },
     {
       "nameExplicit": false,
-      "columns": [
-        "email"
-      ],
+      "columns": ["email"],
       "nullsNotDistinct": false,
       "name": "users_email_key",
       "schema": "public",
