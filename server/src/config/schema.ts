@@ -33,6 +33,7 @@ export const oidcOptionsSchema = z.object({
   issuerUrl: z.url().transform((value) => new URL(value)),
   clientId: z.string(),
   clientSecret: z.string(),
+  scopes: z.array(z.string()),
 });
 
 export const configSchema = z.object({
