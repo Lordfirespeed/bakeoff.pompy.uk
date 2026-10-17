@@ -3,9 +3,10 @@ import { ClientError } from "@otterhttp/errors";
 import * as client from "openid-client";
 
 import { origin } from "@/config";
+import { issuerConfigs } from "@/lib/identity-provider-client";
 import { getSession } from "@/lib/session";
+import { isString } from "@/lib/type-guards";
 import type { Middleware, Request, Response } from "@/types/middleware";
-import {issuerConfig} from "@/lib/identity-provider-client";
 
 export class AuthHandlers {
   static loginPageUrl = new URL("/login", origin).href;
@@ -13,11 +14,11 @@ export class AuthHandlers {
 
   validateIdentityProvider(): Middleware {
     return async (request, _response, next) => {
-      const identityProvider = request.params.slug;
-      if (identityProvider === "twitch") return next();
+      const identityProviderSlug = request.params.slug;
+      if (isString(identityProviderSlug) && issuerConfigs.has(identityProviderSlug)) return next();
 
       throw new ClientError(
-        `Identity provider '${identityProvider}' not recognised`,
+        `Identity provider '${identityProviderSlug}' not recognised`,
         {
           exposeMessage: true,
           statusCode: 404,
@@ -25,6 +26,14 @@ export class AuthHandlers {
         },
       );
     };
+  }
+
+  getIdentityProviderConfig(request: Request, _response: Response): client.Configuration {
+    const identityProviderSlug = request.params.slug;
+    assert(identityProviderSlug != null)
+    const identityProvider = issuerConfigs.get(identityProviderSlug)
+    assert(identityProvider != null)
+    return identityProvider
   }
 
   loginSuccess(): Middleware {
@@ -51,27 +60,29 @@ export class AuthHandlers {
   logout(): Middleware {
     return async (request, response) => {
       if (request.user == null) {
-        await response.redirect(origin.href)
-        return
+        await response.redirect(origin.href);
+        return;
       }
 
-      const session = await getSession(request, response)
-      session.userId = undefined
-      session.identityProvider = undefined
-      await session.commit()
+      const session = await getSession(request, response);
+      session.userId = undefined;
+      session.identityProvider = undefined;
+      await session.commit();
 
       if (request.userTokenSet?.idToken == null) {
-        await response.redirect(origin.href)
-        return
+        await response.redirect(origin.href);
+        return;
       }
 
       // the identity provider is known based off the tokenSet
+      const issuerConfig = issuerConfigs.get(request.userTokenSet.identityProvider)
+      assert(issuerConfig != null)
       const endSessionUrl = client.buildEndSessionUrl(issuerConfig, {
         id_token_hint: request.userTokenSet?.idToken,
         post_logout_redirect_uri: origin.href,
-      })
-      await response.redirect(endSessionUrl.href)
-      return
+      });
+      await response.redirect(endSessionUrl.href);
+      return;
     };
   }
 
