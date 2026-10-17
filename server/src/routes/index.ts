@@ -15,7 +15,8 @@ routesApp
   .all(methodNotAllowed(["GET"]))
   .get(
     serveStaticJson({
-      you_url: new URL("/user", origin).href,
+      auth_url: new URL("/api/auth", origin).href,
+      you_url: new URL("/api/user", origin).href,
     }),
   );
 

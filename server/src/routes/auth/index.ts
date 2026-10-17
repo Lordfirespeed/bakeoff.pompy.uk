@@ -15,7 +15,8 @@ authApp
   .all(methodNotAllowed(["GET"]))
   .get(
     serveStaticJson({
-      twitch_auth_url: new URL("/auth/twitch", origin).href,
+      twitch_auth_url: new URL("/api/auth/twitch", origin).href,
+      logout_url: new URL("/api/auth/logout", origin).href,
     }),
   );
 
@@ -24,8 +25,10 @@ authApp
   .all(methodNotAllowed(["GET"]))
   .all(authHandlers.validateIdentityProvider())
   .get(async (request, response) => {
-    console.log(request.params);
-    response.sendStatus(200);
+    response.json({
+      login_url: new URL(`${request.pathnameWithoutTrailingSlash}/login`, origin).href,
+      callback_url: new URL(`${request.pathnameWithoutTrailingSlash}/callback`, origin).href,
+    })
   });
 
 authApp
