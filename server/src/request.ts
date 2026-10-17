@@ -5,7 +5,7 @@ import type { UserInfoResponse } from "openid-client";
 import type { TokenSet } from "@/db/schema";
 
 export class Request extends OtterRequest<never> {
-  user?: { userId: number; email: string };
+  user?: { id: number; email: string };
   userTokenSet?: Omit<TokenSet, "userId">;
   userProfile?: UserInfoResponse;
 

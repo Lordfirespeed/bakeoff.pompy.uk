@@ -309,7 +309,7 @@ export class AuthHandlers {
       session.userId = userId;
       session.identityProvider = identityProviderSlug;
       await session.commit();
-      request.user = { userId, email: claims.email as string };
+      request.user = { id: userId, email: claims.email as string };
 
       next();
     };
