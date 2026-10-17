@@ -197,13 +197,17 @@ export class AuthHandlers {
       if (response.sessionDirty) await session.commit();
 
       parameters.redirect_uri = new URL(
-        `/auth/${request.params.slug}/callback`,
+        `/api/auth/${request.params.slug}/callback`,
         origin,
       ).href;
       parameters.scope = this.getIdentityProviderScope(request, response);
       parameters.code_challenge =
         await client.calculatePKCECodeChallenge(codeVerifier);
       parameters.code_challenge_method = "S256";
+      parameters.claims = JSON.stringify({
+        id_token: { email: null, email_verified: null, preferred_username: null },
+        userinfo: { email: null, email_verified: null, preferred_username: null },
+      })
 
       const url = client.buildAuthorizationUrl(clientConfig, parameters);
       await response.redirect(url.href);
@@ -216,7 +220,7 @@ export class AuthHandlers {
       let codeVerifier: unknown
       let state: unknown
       try {
-        codeVerifier = session.keycloakOAuth2FlowCodeVerifier
+        codeVerifier = session.providerOAuth2FlowCodeVerifier
         state = session.providerOAuth2FlowState
         if (!isString(codeVerifier))
           throw new ClientError("OAuth2 code verifier not initialized", {
@@ -241,12 +245,6 @@ export class AuthHandlers {
         {
           pkceCodeVerifier: codeVerifier,
           expectedState: state,
-        },
-        {
-          claims: JSON.stringify({
-            id_token: { email: null, email_verified: null, preferred_username: null },
-            userinfo: { email: null, email_verified: null, preferred_username: null },
-          })
         },
       )
 
