@@ -36,6 +36,12 @@ export const oidcOptionsSchema = z.object({
   scopes: z.array(z.string()),
 });
 
+export const bakeoffOptionsSchema = z.object({
+  adminUsernames: z.set(z.string()),
+  bakerUsernames: z.set(z.string()),
+  judgeUsernames: z.set(z.string()),
+});
+
 export const configSchema = z.object({
   listen: listenOptionsSchema,
   origin: z.url().transform((value) => new URL(value)),
@@ -43,6 +49,7 @@ export const configSchema = z.object({
   cookieSigning: cookieSigningOptionsSchema,
   db: dbOptionsSchema,
   oidc: oidcOptionsSchema,
+  bakeoff: bakeoffOptionsSchema,
 });
 
 export type Config = z.infer<typeof configSchema>;

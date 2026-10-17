@@ -31,6 +31,7 @@ export const {
   oidc: oidcConfig,
   session: sessionConfig,
   cookieSigning: cookieSigningConfig,
+  bakeoff: bakeoffConfig,
 } = config;
 
 export { config };
