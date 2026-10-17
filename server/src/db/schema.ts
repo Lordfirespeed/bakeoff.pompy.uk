@@ -25,7 +25,7 @@ export const tokenSets = pgTable(
     identityProvider: string("identity_provider").notNull(),
     tokenType: string("token_type"),
     accessToken: string("access_token"),
-    idToken: string("id_token"),
+    idToken: varchar("id_token", { length: 1024 }),
     refreshToken: string("refresh_token"),
     scope: string("scope"),
     accessExpiry: timestamp("access_expires_at", { withTimezone: false }),
