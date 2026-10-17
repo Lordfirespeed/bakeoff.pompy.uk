@@ -37,8 +37,8 @@ export function forbiddenOrUnauthorised(): Middleware {
         exposeMessage: true,
         expected: true,
         extra: {
-          login_url: new URL(
-            `/auth/keycloak/login?destination=${encodeURIComponent(request.href)}`,
+          twitch_login_url: new URL(
+            `/api/auth/twitch/login?destination=${encodeURIComponent(request.href)}`,
             origin,
           ).href,
         },
