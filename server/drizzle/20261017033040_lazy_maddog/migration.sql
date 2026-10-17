@@ -1,0 +1,1 @@
+ALTER TABLE "token_sets" ALTER COLUMN "id_token" SET DATA TYPE varchar(1024) USING "id_token"::varchar(1024);
