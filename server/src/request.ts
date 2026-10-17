@@ -9,7 +9,7 @@ export class Request extends OtterRequest<never> {
   user?: { id: number; email: string };
   userTokenSet?: Omit<TokenSet, "userId">;
   userProfile?: UserInfoResponse;
-  roles?: Role[]
+  roles?: Role[];
 
   private _queryString?: string;
 

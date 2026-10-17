@@ -44,5 +44,5 @@ export default {
       "erinsfunnybusiness",
     ]),
     judgeUsernames: new Set(["pompyhq"]),
-  }
+  },
 } satisfies ConfigIn;

@@ -3,17 +3,16 @@ import { ServerError } from "@otterhttp/errors";
 import { and, eq } from "drizzle-orm";
 import { validateJwtIdToken } from "oauth4webapi";
 import * as client from "openid-client";
-
+import { bakeoffConfig } from "@/config";
 import { drizzle, tokenSets } from "@/db";
 import type { TokenSet as DbTokenSet } from "@/db/schema";
 import { adaptTokenResponseToDatabase } from "@/lib/adapt-token-response";
 import { issuers } from "@/lib/identity-provider-client";
 import { isNetworkError } from "@/lib/is-network-error";
+import { Role } from "@/lib/roles";
 import { getSession } from "@/lib/session";
+import { isString } from "@/lib/type-guards";
 import type { Middleware, Request } from "@/types/middleware";
-import {bakeoffConfig} from "@/config";
-import {isString} from "@/lib/type-guards";
-import {Role} from "@/lib/roles";
 
 /**
  * Returns a middleware which assigns {@link Request.user}, {@link Request.userTokenSet} and {@link Request.userProfile}
@@ -138,12 +137,12 @@ export function authenticate(): Middleware {
     }
 
     const username = claims.preferred_username;
-    assert(isString(username))
+    assert(isString(username));
 
-    const roles: Role[] = []
-    if (bakeoffConfig.adminUsernames.has(username)) roles.push(Role.admins)
-    if (bakeoffConfig.judgeUsernames.has(username)) roles.push(Role.bakers)
-    if (bakeoffConfig.bakerUsernames.has(username)) roles.push(Role.bakers)
+    const roles: Role[] = [];
+    if (bakeoffConfig.adminUsernames.has(username)) roles.push(Role.admins);
+    if (bakeoffConfig.judgeUsernames.has(username)) roles.push(Role.bakers);
+    if (bakeoffConfig.bakerUsernames.has(username)) roles.push(Role.bakers);
 
     request.userProfile = profile;
     request.userTokenSet = tokenSet;
