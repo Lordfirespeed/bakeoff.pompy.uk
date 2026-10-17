@@ -28,4 +28,21 @@ export default {
     clientSecret: "not-a-real-client-secret",
     scopes: ["openid", "user:read:email"],
   },
+  bakeoff: {
+    adminUsernames: new Set(["pompyhq", "lordfirespeed"]),
+    bakerUsernames: new Set([
+      "eziverse",
+      "theunfittingkey",
+      "galdurprice",
+      "elliednc",
+      "bubblypeachie",
+      "annadalehaven",
+      "lavendorra",
+      "velsiraptor",
+      "nate_the_pathfinder",
+      "elisasnows",
+      "erinsfunnybusiness",
+    ]),
+    judgeUsernames: new Set(["pompyhq"]),
+  }
 } satisfies ConfigIn;
