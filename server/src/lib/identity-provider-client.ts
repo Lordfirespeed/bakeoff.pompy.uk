@@ -6,18 +6,15 @@ type Issuer = {
   slug: string;
   scopes: string[];
   clientConfig: Configuration;
-}
+};
 
-export const issuerConfigs: Map<string, Issuer> = new Map();
-issuerConfigs.set(
-  oidcConfig.issuerSlug,
-  {
-    slug: oidcConfig.issuerSlug,
-    scopes: oidcConfig.scopes,
-    clientConfig: await discovery(
-      oidcConfig.issuerUrl,
-      oidcConfig.clientId,
-      oidcConfig.clientSecret,
-    ),
-  }
-);
+export const issuers: Map<string, Issuer> = new Map();
+issuers.set(oidcConfig.issuerSlug, {
+  slug: oidcConfig.issuerSlug,
+  scopes: oidcConfig.scopes,
+  clientConfig: await discovery(
+    oidcConfig.issuerUrl,
+    oidcConfig.clientId,
+    oidcConfig.clientSecret,
+  ),
+});

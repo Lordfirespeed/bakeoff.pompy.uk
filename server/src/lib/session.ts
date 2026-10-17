@@ -70,6 +70,7 @@ class DrizzleSessionStore implements SessionStore {
 
 export type BakeoffSessionRecord = Record<string, unknown> & {
   providerOAuth2FlowCodeVerifier?: string | undefined;
+  providerOAuth2FlowState?: string | undefined;
   identityProvider?: string | undefined;
   userId?: number | undefined;
   redirectTo?: string | undefined;

@@ -1,10 +1,11 @@
 import assert from "node:assert/strict";
 import { ClientError } from "@otterhttp/errors";
 import * as client from "openid-client";
+import z from "zod/v4";
 
 import { origin } from "@/config";
-import { issuerConfigs } from "@/lib/identity-provider-client";
-import { getSession } from "@/lib/session";
+import { issuers } from "@/lib/identity-provider-client";
+import { type BakeoffSession, getSession } from "@/lib/session";
 import { isString } from "@/lib/type-guards";
 import type { Middleware, Request, Response } from "@/types/middleware";
 
@@ -12,10 +13,35 @@ export class AuthHandlers {
   static loginPageUrl = new URL("/login", origin).href;
   static defaultPostLoginRedirect = new URL("/vote", origin).href;
 
+  static urlOriginIsTrusted(url: URL) {
+    return url.origin === origin.origin;
+  }
+
+  static destinationUrlSchema = z
+    .string()
+    .transform((value, ctx) => {
+      try {
+        return new URL(value);
+      } catch (_error) {
+        ctx.issues.push({
+          input: value,
+          code: "invalid_format",
+          format: "url",
+          message: "Invalid url",
+        });
+        return z.NEVER;
+      }
+    })
+    .refine((value) => AuthHandlers.urlOriginIsTrusted(value), {
+      error: (issue) =>
+        `Specified destination origin ${(issue.input as URL).origin} is not trusted`,
+    });
+
   validateIdentityProvider(): Middleware {
     return async (request, _response, next) => {
       const identityProviderSlug = request.params.slug;
-      if (isString(identityProviderSlug) && issuerConfigs.has(identityProviderSlug)) return next();
+      if (isString(identityProviderSlug) && issuers.has(identityProviderSlug))
+        return next();
 
       throw new ClientError(
         `Identity provider '${identityProviderSlug}' not recognised`,
@@ -28,12 +54,75 @@ export class AuthHandlers {
     };
   }
 
-  getIdentityProviderConfig(request: Request, _response: Response): client.Configuration {
+  getIdentityProvider(request: Request, _response: Response) {
     const identityProviderSlug = request.params.slug;
-    assert(identityProviderSlug != null)
-    const identityProvider = issuerConfigs.get(identityProviderSlug)
-    assert(identityProvider != null)
-    return identityProvider
+    assert(identityProviderSlug != null);
+    const identityProvider = issuers.get(identityProviderSlug);
+    assert(identityProvider != null);
+    return identityProvider;
+  }
+
+  getIdentityProviderConfig(
+    request: Request,
+    response: Response,
+  ): client.Configuration {
+    return this.getIdentityProvider(request, response).clientConfig;
+  }
+
+  getIdentityProviderScope(request: Request, response: Response): string {
+    return this.getIdentityProvider(request, response).scopes.join(" ");
+  }
+
+  /**
+   * 'lazily' log out the user - don't call the identity provider logout endpoint.
+   * Just remove the user ID from the user's session.
+   *
+   * It's important we do this before initiating the login flow because we want to downgrade the session cookie to
+   * SameSite 'Lax' during the OAuth flow (not implemented yet -
+   * requires https://github.com/OtterJS/otterhttp-session/issues/1).
+   */
+  lazyLogout(response: Response, session: BakeoffSession): void {
+    if (session.userId == null) return;
+
+    session.userId = undefined;
+    response.sessionDirty = true;
+  }
+
+  getOrGenerateCodeVerifier(
+    response: Response,
+    session: BakeoffSession,
+  ): string {
+    if (isString(session.providerOAuth2FlowCodeVerifier))
+      return session.providerOAuth2FlowCodeVerifier;
+
+    const codeVerifier = client.randomPKCECodeVerifier();
+    session.providerOAuth2FlowCodeVerifier = codeVerifier;
+    response.sessionDirty = true;
+    return codeVerifier;
+  }
+
+  generateState(response: Response, session: BakeoffSession): string {
+    const state = client.randomState();
+    session.providerOAuth2FlowState = state;
+    response.sessionDirty = true;
+    return state;
+  }
+
+  rememberDestination(
+    request: Request,
+    response: Response,
+    session: BakeoffSession,
+  ): void {
+    const destination =
+      request.query.destination != null
+        ? AuthHandlers.destinationUrlSchema.parse(request.query.destination)
+        : null;
+
+    if (session.redirectTo == null && destination?.href == null) return;
+    if (session.redirectTo === destination?.href) return;
+
+    session.redirectTo = destination?.href;
+    response.sessionDirty = true;
   }
 
   loginSuccess(): Middleware {
@@ -75,9 +164,9 @@ export class AuthHandlers {
       }
 
       // the identity provider is known based off the tokenSet
-      const issuerConfig = issuerConfigs.get(request.userTokenSet.identityProvider)
-      assert(issuerConfig != null)
-      const endSessionUrl = client.buildEndSessionUrl(issuerConfig, {
+      const issuer = issuers.get(request.userTokenSet.identityProvider);
+      assert(issuer != null);
+      const endSessionUrl = client.buildEndSessionUrl(issuer.clientConfig, {
         id_token_hint: request.userTokenSet?.idToken,
         post_logout_redirect_uri: origin.href,
       });
@@ -87,7 +176,31 @@ export class AuthHandlers {
   }
 
   beginOAuth2Flow(): Middleware {
-    return async (request, response) => {};
+    return async (request, response) => {
+      const clientConfig = this.getIdentityProviderConfig(request, response);
+
+      const parameters: Record<string, string> = {};
+      const session = await getSession(request, response);
+      this.rememberDestination(request, response, session);
+      this.lazyLogout(response, session);
+      const codeVerifier = this.getOrGenerateCodeVerifier(response, session);
+      if (!clientConfig.serverMetadata().supportsPKCE()) {
+        parameters.state = this.generateState(response, session);
+      }
+      if (response.sessionDirty) await session.commit();
+
+      parameters.redirect_uri = new URL(
+        `/auth/${request.params.slug}/callback`,
+        origin,
+      ).href;
+      parameters.scope = "openid user:read:email";
+      parameters.code_challenge =
+        await client.calculatePKCECodeChallenge(codeVerifier);
+      parameters.code_challenge_method = "S256";
+
+      const url = client.buildAuthorizationUrl(clientConfig, parameters);
+      await response.redirect(url.href);
+    };
   }
 
   oauth2FlowCallback(): Middleware {

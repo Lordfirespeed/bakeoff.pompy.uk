@@ -7,7 +7,7 @@ import * as client from "openid-client";
 import { drizzle, tokenSets } from "@/db";
 import type { TokenSet as DbTokenSet } from "@/db/schema";
 import { adaptTokenResponseToDatabase } from "@/lib/adapt-token-response";
-import { issuerConfigs } from "@/lib/identity-provider-client";
+import { issuers } from "@/lib/identity-provider-client";
 import { isNetworkError } from "@/lib/is-network-error";
 import { getSession } from "@/lib/session";
 import type { Middleware, Request } from "@/types/middleware";
@@ -33,8 +33,8 @@ export function authenticate(): Middleware {
     const session = await getSession(request, response);
     if (session.userId == null) return next();
     assert(session.identityProvider != null);
-    const issuerConfig = issuerConfigs.get(session.identityProvider);
-    assert(issuerConfig != null);
+    const issuer = issuers.get(session.identityProvider);
+    assert(issuer != null);
 
     const user = await drizzle.query.users.findFirst({
       where: { id: session.userId },
@@ -56,7 +56,7 @@ export function authenticate(): Middleware {
     if (tokenSetExpired && tokenSet.refreshToken != null) {
       try {
         const response = await client.refreshTokenGrant(
-          issuerConfig,
+          issuer.clientConfig,
           tokenSet.refreshToken,
         );
         tokenSet = adaptTokenResponseToDatabase(
@@ -96,8 +96,8 @@ export function authenticate(): Middleware {
 
     assert(tokenSet.idToken != null);
     const claims = await validateJwtIdToken(
-      issuerConfig.serverMetadata(),
-      issuerConfig.clientMetadata(),
+      issuer.clientConfig.serverMetadata(),
+      issuer.clientConfig.clientMetadata(),
       tokenSet.idToken,
       {},
     );
@@ -106,7 +106,7 @@ export function authenticate(): Middleware {
     let profile: client.UserInfoResponse | undefined;
     try {
       profile = await client.fetchUserInfo(
-        issuerConfig,
+        issuer.clientConfig,
         tokenSet.accessToken,
         claims.sub,
       );

@@ -8,6 +8,13 @@ import type { JSONLiteral } from "@/types/json-literal";
 export class Response<
   Req extends Request = Request,
 > extends OtterResponse<Req> {
+  sessionDirty: boolean;
+
+  constructor(request: Req) {
+    super(request);
+    this.sessionDirty = false;
+  }
+
   override sendStatus(statusCode: number): this {
     this.statusCode = statusCode;
 
