@@ -5,3 +5,5 @@ packages:
 allowBuilds:
   esbuild: true
   workerd: true
+patchedDependencies:
+  oauth4webapi: patches/oauth4webapi.patch
