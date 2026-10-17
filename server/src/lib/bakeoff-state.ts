@@ -1,6 +1,10 @@
 import { ServerError } from "@otterhttp/errors";
+import { eq } from "drizzle-orm";
 import { drizzle } from "@/db";
+import { state } from "@/db/schema";
 import { isString } from "@/lib/type-guards";
+
+const VOTING_STATUS_STATE_KEY = "voting_status";
 
 const validVotingStatusValues = [
   "not-started",
@@ -17,7 +21,7 @@ function isVotingStatus(value: unknown): value is VotingStatus {
 
 export async function getVotingStatus(): Promise<VotingStatus> {
   const votingStatus = await drizzle.query.state.findFirst({
-    where: { key: "voting_status" },
+    where: { key: VOTING_STATUS_STATE_KEY },
   });
   if (votingStatus == null) return "not-started";
   if (!isVotingStatus(votingStatus.value))
@@ -25,4 +29,11 @@ export async function getVotingStatus(): Promise<VotingStatus> {
       code: "ERR_VOTING_STATUS_CORRUPT",
     });
   return votingStatus.value;
+}
+
+export async function setVotingStatus(newStatus: VotingStatus) {
+  await drizzle
+    .update(state)
+    .set({ value: newStatus })
+    .where(eq(state.key, VOTING_STATUS_STATE_KEY));
 }
