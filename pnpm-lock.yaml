@@ -163,7 +163,7 @@ settings:
   excludeLinksFromLockfile: false
 
 patchedDependencies:
-  oauth4webapi: c0d1fa74d5ca5fd84904fe8f8d4e35b15d21cc60851acca9024e7d0e8598ba65
+  oauth4webapi: 3ff9babbeed06e952075e0f01cb8491a224653f224309a07e0140651ba028794
 
 importers:
 
@@ -213,7 +213,7 @@ importers:
         version: 6.2.12
       oauth4webapi:
         specifier: ^3.8.8
-        version: 3.8.8(patch_hash=c0d1fa74d5ca5fd84904fe8f8d4e35b15d21cc60851acca9024e7d0e8598ba65)
+        version: 3.8.8(patch_hash=3ff9babbeed06e952075e0f01cb8491a224653f224309a07e0140651ba028794)
       openid-client:
         specifier: ^6.8.8
         version: 6.8.8
@@ -2870,7 +2870,7 @@ snapshots:
 
   negotiator@0.6.4: {}
 
-  oauth4webapi@3.8.8(patch_hash=c0d1fa74d5ca5fd84904fe8f8d4e35b15d21cc60851acca9024e7d0e8598ba65): {}
+  oauth4webapi@3.8.8(patch_hash=3ff9babbeed06e952075e0f01cb8491a224653f224309a07e0140651ba028794): {}
 
   object-assign@4.1.1: {}
 
@@ -2879,7 +2879,7 @@ snapshots:
   openid-client@6.8.8:
     dependencies:
       jose: 6.2.12
-      oauth4webapi: 3.8.8(patch_hash=c0d1fa74d5ca5fd84904fe8f8d4e35b15d21cc60851acca9024e7d0e8598ba65)
+      oauth4webapi: 3.8.8(patch_hash=3ff9babbeed06e952075e0f01cb8491a224653f224309a07e0140651ba028794)
 
   pathe@2.0.3: {}
 
