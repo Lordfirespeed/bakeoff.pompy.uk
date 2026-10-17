@@ -23,7 +23,7 @@ authApp
 authApp
   .route("/logout")
   .all(methodNotAllowed(["GET"]))
-  .all(authenticate)
+  .all(authenticate())
   .get(authHandlers.logout());
 
 
