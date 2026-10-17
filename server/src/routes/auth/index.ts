@@ -26,16 +26,21 @@ authApp
   .all(authenticate())
   .get(authHandlers.logout());
 
-
 authApp
   .route("/:slug/")
   .all(methodNotAllowed(["GET"]))
   .all(authHandlers.validateIdentityProvider())
   .get(async (request, response) => {
     response.json({
-      login_url: new URL(`${request.pathnameWithoutTrailingSlash}/login`, origin).href,
-      callback_url: new URL(`${request.pathnameWithoutTrailingSlash}/callback`, origin).href,
-    })
+      login_url: new URL(
+        `${request.pathnameWithoutTrailingSlash}/login`,
+        origin,
+      ).href,
+      callback_url: new URL(
+        `${request.pathnameWithoutTrailingSlash}/callback`,
+        origin,
+      ).href,
+    });
   });
 
 authApp
