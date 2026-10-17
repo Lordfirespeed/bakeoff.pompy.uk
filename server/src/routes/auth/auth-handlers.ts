@@ -215,7 +215,7 @@ export class AuthHandlers {
   }
 
   oauth2FlowCallback(): Middleware {
-    return async (request, response) => {
+    return async (request, response, next) => {
       const session = await getSession(request, response);
       let codeVerifier: unknown
       let state: unknown
@@ -287,6 +287,8 @@ export class AuthHandlers {
       session.identityProvider = identityProviderSlug
       await session.commit()
       request.user = { userId, email: claims.email as string, }
+
+      next()
     };
   }
 }
