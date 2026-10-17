@@ -6,7 +6,7 @@ import * as client from "openid-client";
 import { drizzle, tokenSets } from "@/db";
 import type { TokenSet as DbTokenSet } from "@/db/schema";
 import { adaptTokenResponseToDatabase } from "@/lib/adapt-token-response";
-import { issuerConfig } from "@/lib/identity-provider-client";
+import { issuerConfigs } from "@/lib/identity-provider-client";
 import { isNetworkError } from "@/lib/is-network-error";
 import { getSession } from "@/lib/session";
 import type { Middleware, Request } from "@/types/middleware";
@@ -32,6 +32,9 @@ export function authenticate(): Middleware {
     const session = await getSession(request, response);
     if (session.userId == null) return next();
     assert(session.identityProvider != null);
+    const issuerConfig = issuerConfigs.get(session.identityProvider);
+    assert(issuerConfig != null);
+
     const user = await drizzle.query.users.findFirst({
       where: { id: session.userId },
       with: {
